@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Put,
@@ -55,7 +56,7 @@ export class UserController {
 
   @Delete(':id')
   @HttpCode(202)
-  async delete(@Param() params) {
-    return { params };
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    return { id };
   }
 }
