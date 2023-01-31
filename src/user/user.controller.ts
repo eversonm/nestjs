@@ -28,29 +28,29 @@ export class UserController {
   }
 
   @Get(':id')
-  async readOne(@Param() params) {
-    return { user: {}, params };
+  async readOne(@Param('id', ParseIntPipe) id: number) {
+    return { user: {}, id };
   }
 
   @Put(':id')
   async update(
     @Body() { name, email, password }: UpdateUserDTO,
-    @Param() params,
+    @Param('id', ParseIntPipe) id: number,
   ) {
-    return { method: 'PUT', name, email, password, params };
+    return { method: 'PUT', name, email, password, id };
   }
 
   @Patch(':id')
   async updatePartial(
     @Body() { name, email, password }: UpdatePatchUserDTO,
-    @Param() params,
+    @Param('id', ParseIntPipe) id: number,
   ) {
     return {
       method: 'Patch',
       name,
       email,
       password,
-      params,
+      id,
     };
   }
 
