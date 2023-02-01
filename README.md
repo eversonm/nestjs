@@ -24,7 +24,10 @@ $ npm install
 ```
 
 ## Before running the app
-
+Create a <b>.env</b> file with your MySQL config:
+<pre>DATABASE_URL="mysql://root:MySql2023@localhost:3306/testedb"
+</pre>
+And then:
 ```bash
 # init mysql docker container and execute in background
 $ docker compose up -d
