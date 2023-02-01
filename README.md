@@ -23,6 +23,13 @@
 $ npm install
 ```
 
+## Before uunning the app
+
+```bash
+# init mysql docker container and execute in background
+$ docker compose up -d
+```
+
 ## Running the app
 
 ```bash
