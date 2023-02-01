@@ -1,24 +1,26 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { ApiBody } from '@nestjs/swagger';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdatePatchUserDTO } from './dto/update-patch-user.dto';
 import { UpdateUserDTO } from './dto/update-put-user.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: CreateUserDTO) {
+  async create(data: CreateUserDTO): Promise<User> {
     return this.prisma.user.create({
       data,
     });
   }
 
-  async read() {
+  async read(): Promise<User[]> {
     return this.prisma.user.findMany();
   }
 
-  async readOne(id: number) {
+  async readOne(id: number): Promise<User> {
     return this.prisma.user.findUnique({
       where: {
         id,
@@ -28,7 +30,6 @@ export class UserService {
 
   async update(id: number, { email, name, password, birthAt }: UpdateUserDTO) {
     await this.exists(id);
-    
 
     if (!birthAt) {
       birthAt = null;
@@ -51,7 +52,6 @@ export class UserService {
     { email, name, password, birthAt }: UpdatePatchUserDTO,
   ) {
     await this.exists(id);
-    
 
     const data: any = {};
     if (birthAt) {
@@ -83,7 +83,7 @@ export class UserService {
     });
   }
 
-  async exists(id: number){
+  async exists(id: number) {
     if (!(await this.readOne(id))) {
       throw new NotFoundException(`O usuário com id: ${id} não existe!`);
     }
