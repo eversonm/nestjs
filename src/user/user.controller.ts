@@ -9,14 +9,17 @@ import {
   Patch,
   Post,
   Put,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { LogInterceptor } from 'src/interceptors/log.interceptor';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdatePatchUserDTO } from './dto/update-patch-user.dto';
 import { UpdateUserDTO } from './dto/update-put-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
+@UseInterceptors(LogInterceptor)
 @ApiTags('Users')
 @Controller('users')
 export class UserController {
@@ -28,7 +31,7 @@ export class UserController {
     description: 'Create a user using name, email and password at least',
   })
   @ApiResponse({ status: 201, description: 'Created.' })
-  @ApiBody({type: CreateUserDTO})
+  @ApiBody({ type: CreateUserDTO })
   async create(@Body() data: CreateUserDTO): Promise<User> {
     return this.userService.create(data);
   }
