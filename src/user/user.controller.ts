@@ -4,14 +4,13 @@ import {
   Delete,
   Get,
   HttpCode,
-  Param,
-  ParseIntPipe,
   Patch,
   Post,
   Put,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ParamId } from 'src/decorators/param-id.decorator';
 import { LogInterceptor } from 'src/interceptors/log.interceptor';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdatePatchUserDTO } from './dto/update-patch-user.dto';
@@ -50,7 +49,7 @@ export class UserController {
     summary: 'Read only one user',
     description: 'Read only one user from database',
   })
-  async readOne(@Param('id', ParseIntPipe) id: number) {
+  async readOne(@ParamId() id: number) {
     return this.userService.readOne(id);
   }
 
@@ -61,7 +60,7 @@ export class UserController {
   })
   async update(
     @Body() data: UpdateUserDTO,
-    @Param('id', ParseIntPipe) id: number,
+    @ParamId() id: number,
   ) {
     return this.userService.update(id, data);
   }
@@ -73,7 +72,7 @@ export class UserController {
   })
   async updatePartial(
     @Body() data: UpdatePatchUserDTO,
-    @Param('id', ParseIntPipe) id: number,
+    @ParamId() id: number,
   ) {
     return this.userService.updatePartial(id, data);
   }
@@ -84,7 +83,7 @@ export class UserController {
     summary: 'Delete one user',
     description: 'Delete a user from database',
   })
-  async delete(@Param('id', ParseIntPipe) id: number) {
+  async delete(@ParamId() id: number) {
     return this.userService.delete(id);
   }
 }
