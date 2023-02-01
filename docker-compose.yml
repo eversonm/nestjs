@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  mysqlsrv:
+    container_name: mysql
+    image: mysql:5.7
+    environment:
+      MYSQL_USER: "nestjs"
+      MYSQL_ROOT_PASSWORD: "MySql2023"
+      MYSQL_DATABASE: "testedb"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+#     networks:
+#       - mysql-compose-network
+
+
+# networks: 
+#   mysql-compose-network:
+#     driver: bridge
