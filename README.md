@@ -26,6 +26,7 @@ $ npm install
 ## Before running the app
 Create a <b>.env</b> file with your MySQL config:
 <pre>DATABASE_URL="mysql://root:MySql2023@localhost:3306/testedb"
+JWT_KEY="YOUR_SECRET_KEY_HERE_123456789101112"
 </pre>
 And then:
 ```bash
