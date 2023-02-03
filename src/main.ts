@@ -12,6 +12,8 @@ async function bootstrap() {
   // for all controllers
   // app.useGlobalInterceptors(new LogInterceptor());
 
+  app.enableCors();
+
   const config = new DocumentBuilder()
     .setTitle('Users API Rest')
     .setDescription('CRUD for users')

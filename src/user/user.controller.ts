@@ -8,7 +8,7 @@ import {
   Post,
   Put,
   UseGuards,
-  UseInterceptors,
+  UseInterceptors
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ParamId } from 'src/decorators/param-id.decorator';
@@ -42,6 +42,7 @@ export class UserController {
     return this.userService.create(data);
   }
 
+  // @SkipThrottle()
   @Get()
   @ApiOperation({
     summary: 'Read all users',
