@@ -23,6 +23,7 @@ import { UpdateUserDTO } from './dto/update-put-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
+@Roles(Role.Admin)
 @UseGuards(AuthGuard, RoleGuard)
 @UseInterceptors(LogInterceptor)
 @ApiTags('Users')
@@ -30,7 +31,6 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Roles(Role.Admin)
   @Post()
   @ApiOperation({
     summary: 'Create a new user',
@@ -42,7 +42,6 @@ export class UserController {
     return this.userService.create(data);
   }
 
-  @Roles(Role.Admin)
   @Get()
   @ApiOperation({
     summary: 'Read all users',
@@ -52,7 +51,6 @@ export class UserController {
     return this.userService.read();
   }
 
-  @Roles(Role.Admin)
   @Get(':id')
   @ApiOperation({
     summary: 'Read only one user',
@@ -62,7 +60,6 @@ export class UserController {
     return this.userService.readOne(id);
   }
 
-  @Roles(Role.Admin)
   @Put(':id')
   @ApiOperation({
     summary: 'Update info from one user',
@@ -72,7 +69,6 @@ export class UserController {
     return this.userService.update(id, data);
   }
 
-  @Roles(Role.Admin)
   @Patch(':id')
   @ApiOperation({
     summary: 'Update partially info from one user',
@@ -82,7 +78,6 @@ export class UserController {
     return this.userService.updatePartial(id, data);
   }
 
-  @Roles(Role.Admin)
   @Delete(':id')
   @HttpCode(202)
   @ApiOperation({
