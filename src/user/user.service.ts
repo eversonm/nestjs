@@ -1,16 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ApiBody } from '@nestjs/swagger';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdatePatchUserDTO } from './dto/update-patch-user.dto';
 import { UpdateUserDTO } from './dto/update-put-user.dto';
 import { User } from './entities/user.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: CreateUserDTO): Promise<User> {
+    data.password = await bcrypt.hash(data.password, await bcrypt.genSalt());
     return this.prisma.user.create({
       data,
     });
@@ -29,8 +30,13 @@ export class UserService {
     });
   }
 
-  async update(id: number, { email, name, password, birthAt, role }: UpdateUserDTO) {
+  async update(
+    id: number,
+    { email, name, password, birthAt, role }: UpdateUserDTO,
+  ) {
     await this.exists(id);
+
+    password = await bcrypt.hash(password, await bcrypt.genSalt());
 
     if (!birthAt) {
       birthAt = null;
@@ -41,7 +47,7 @@ export class UserService {
         name,
         password,
         birthAt: birthAt ? new Date(birthAt) : null,
-        role
+        role,
       },
       where: {
         id,
@@ -66,7 +72,7 @@ export class UserService {
       data.name = name;
     }
     if (password) {
-      data.password = password;
+      data.password = await bcrypt.hash(password, await bcrypt.genSalt());;
     }
     if (role) {
       data.role = role;
@@ -89,11 +95,13 @@ export class UserService {
   }
 
   async exists(id: number) {
-    if (!(await this.prisma.user.count({
-      where: {
-        id
-      }
-    }))) {
+    if (
+      !(await this.prisma.user.count({
+        where: {
+          id,
+        },
+      }))
+    ) {
       throw new NotFoundException(`O usuário com id: ${id} não existe!`);
     }
   }
