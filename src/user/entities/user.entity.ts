@@ -35,4 +35,10 @@ export class User {
     description: 'A date for the updated version',
   })
   updatedAt?: Date;
+
+  @ApiProperty({
+    example: 1,
+    description: 'RDBC',
+  })
+  role?: number;
 }

@@ -7,10 +7,15 @@ import {
   Patch,
   Post,
   Put,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ParamId } from 'src/decorators/param-id.decorator';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from 'src/enums/role.enum';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { RoleGuard } from 'src/guards/role.guard';
 import { LogInterceptor } from 'src/interceptors/log.interceptor';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdatePatchUserDTO } from './dto/update-patch-user.dto';
@@ -18,12 +23,14 @@ import { UpdateUserDTO } from './dto/update-put-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
+@UseGuards(AuthGuard, RoleGuard)
 @UseInterceptors(LogInterceptor)
 @ApiTags('Users')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Roles(Role.Admin)
   @Post()
   @ApiOperation({
     summary: 'Create a new user',
@@ -35,6 +42,7 @@ export class UserController {
     return this.userService.create(data);
   }
 
+  @Roles(Role.Admin)
   @Get()
   @ApiOperation({
     summary: 'Read all users',
@@ -44,6 +52,7 @@ export class UserController {
     return this.userService.read();
   }
 
+  @Roles(Role.Admin)
   @Get(':id')
   @ApiOperation({
     summary: 'Read only one user',
@@ -53,30 +62,27 @@ export class UserController {
     return this.userService.readOne(id);
   }
 
+  @Roles(Role.Admin)
   @Put(':id')
   @ApiOperation({
     summary: 'Update info from one user',
     description: 'Update the user information',
   })
-  async update(
-    @Body() data: UpdateUserDTO,
-    @ParamId() id: number,
-  ) {
+  async update(@Body() data: UpdateUserDTO, @ParamId() id: number) {
     return this.userService.update(id, data);
   }
 
+  @Roles(Role.Admin)
   @Patch(':id')
   @ApiOperation({
     summary: 'Update partially info from one user',
     description: 'Update partially user information',
   })
-  async updatePartial(
-    @Body() data: UpdatePatchUserDTO,
-    @ParamId() id: number,
-  ) {
+  async updatePartial(@Body() data: UpdatePatchUserDTO, @ParamId() id: number) {
     return this.userService.updatePartial(id, data);
   }
 
+  @Roles(Role.Admin)
   @Delete(':id')
   @HttpCode(202)
   @ApiOperation({
