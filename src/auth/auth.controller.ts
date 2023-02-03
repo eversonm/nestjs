@@ -7,6 +7,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { User } from 'src/decorators/param-user.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
@@ -45,9 +46,9 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Post('checkToken')
-  async check(@Req() req) {
+  async check(@User() user) {
     return {
-      data: req.tokenPayload,
+      user
     };
     // const jToken = (token ?? '').split(' ')[1];
     // return await this.authService.checkToken(jToken);
