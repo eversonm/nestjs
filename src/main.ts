@@ -18,6 +18,7 @@ async function bootstrap() {
     .setTitle('Users API Rest')
     .setDescription('CRUD for users')
     .setVersion('1.0')
+    .addBearerAuth()
     .addTag('Users')
     .build();
   const document = SwaggerModule.createDocument(app, config);
