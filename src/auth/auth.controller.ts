@@ -4,10 +4,15 @@ import {
   Controller,
   Post,
   UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  FileFieldsInterceptor,
+  FileInterceptor,
+  FilesInterceptor,
+} from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/decorators/param-user.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
@@ -89,5 +94,74 @@ export class AuthController {
       throw new BadRequestException(e);
     }
     return { success: true };
+  }
+
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        files: {
+          type: 'array', // 👈  array of files
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
+        },
+      },
+    },
+  })
+  @UseInterceptors(FilesInterceptor('file'))
+  @UseGuards(AuthGuard)
+  @Post('files')
+  async uploadFiles(
+    @User() user,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    return files;
+  }
+
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        photo: {
+          type: 'string',
+          format: 'binary',
+        },
+        documents: {
+          type: 'array', // 👈  array of files
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
+        },
+      },
+    },
+  })
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      {
+        name: 'photo',
+        maxCount: 1,
+      },
+      {
+        name: 'documents',
+        maxCount: 10,
+      },
+    ]),
+  )
+  @UseGuards(AuthGuard)
+  @Post('filesFields')
+  async uploadFilesFields(
+    @User() user,
+    @UploadedFiles()
+    files: { photo: Express.Multer.File; documents: Express.Multer.File[] },
+  ) {
+    const { photo, documents } = files;
+    return { photo, documents };
   }
 }
