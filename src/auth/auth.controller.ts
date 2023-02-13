@@ -2,6 +2,9 @@ import {
   BadRequestException,
   Body,
   Controller,
+  FileTypeValidator,
+  MaxFileSizeValidator,
+  ParseFilePipe,
   Post,
   UploadedFile,
   UploadedFiles,
@@ -80,7 +83,15 @@ export class AuthController {
   @UseInterceptors(FileInterceptor('file'))
   @UseGuards(AuthGuard)
   @Post('photo')
-  async uploadPhoto(@User() user, @UploadedFile() photo: Express.Multer.File) {
+  async uploadPhoto(
+    @User() user,
+    @UploadedFile(new ParseFilePipe({
+      validators: [
+        new FileTypeValidator({fileType: 'image/*'}),
+        new MaxFileSizeValidator({maxSize: 1024 * 500}) // max 500kB files
+      ]
+    })) photo: Express.Multer.File,
+  ) {
     const mymeT = photo.mimetype.split('/').pop();
     const fileName = photo.originalname.split('.')[0];
     const path = join(
