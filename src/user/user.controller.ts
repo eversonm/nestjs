@@ -20,7 +20,7 @@ import { LogInterceptor } from 'src/interceptors/log.interceptor';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdatePatchUserDTO } from './dto/update-patch-user.dto';
 import { UpdateUserDTO } from './dto/update-put-user.dto';
-import { User } from './entities/user.entity';
+import { UserEntity } from './entities/user.entity';
 import { UserService } from './user.service';
 
 @Roles(Role.Admin)
@@ -38,7 +38,7 @@ export class UserController {
   })
   @ApiResponse({ status: 201, description: 'Created.' })
   @ApiBody({ type: CreateUserDTO })
-  async create(@Body() data: CreateUserDTO): Promise<User> {
+  async create(@Body() data: CreateUserDTO) {
     return this.userService.create(data);
   }
 

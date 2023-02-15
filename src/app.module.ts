@@ -4,9 +4,11 @@ import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { UserEntity } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -23,9 +25,9 @@ import { UserModule } from './user/user.module';
         host: process.env.ETHEREAL_EMAIL_HOST,
         port: 587,
         auth: {
-            user: process.env.ETHEREAL_EMAIL_USER,
-            pass: process.env.ETHEREAL_EMAIL_PASS
-        }
+          user: process.env.ETHEREAL_EMAIL_USER,
+          pass: process.env.ETHEREAL_EMAIL_PASS,
+        },
       },
       defaults: {
         from: `"nest-modules" <${process.env.ETHEREAL_EMAIL_USER}>`,
@@ -37,6 +39,16 @@ import { UserModule } from './user/user.module';
           strict: true,
         },
       },
+    }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+      entities: [UserEntity],
+      synchronize: process.env.ENV === 'development',
     }),
   ],
   controllers: [AppController],

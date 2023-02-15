@@ -5,13 +5,14 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { PrismaService } from 'src/prisma/prisma.service';
-import { User } from 'src/user/entities/user.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { AuthRegisterDTO } from './dto/auth-register.dto';
 
 import * as bcrypt from 'bcrypt';
 import { MailerService } from '@nestjs-modules/mailer/dist';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -20,12 +21,13 @@ export class AuthService {
 
   constructor(
     private readonly jwtService: JwtService,
-    private readonly prisma: PrismaService,
     private readonly userService: UserService,
     private readonly mailer: MailerService,
+    @InjectRepository(UserEntity)
+    private readonly usersRepository: Repository<UserEntity>,
   ) {}
 
-  async createToken(user: User) {
+  async createToken(user: UserEntity) {
     const token = await this.jwtService.sign(
       {
         id: user.id,
@@ -65,7 +67,7 @@ export class AuthService {
   }
 
   async login(email: string, password: string) {
-    const user = await this.prisma.user.findFirst({
+    const user = await this.usersRepository.findOne({
       where: {
         email,
       },
@@ -78,11 +80,12 @@ export class AuthService {
     if (!(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('Email e/ou senha estão incorretos.');
     }
+    // return this.createToken(user);
     return this.createToken(user);
   }
 
   async forget(email: string) {
-    const user = await this.prisma.user.findFirst({
+    const user = await this.usersRepository.findOne({
       where: {
         email,
       },
@@ -124,16 +127,10 @@ export class AuthService {
       if (isNaN(Number(data.id))) {
         throw new BadRequestException('token invalido');
       }
-      password = await bcrypt.hash(password, await bcrypt.genSalt());
-      const user = await this.prisma.user.update({
-        where: {
-          id: data.id,
-        },
-        data: {
-          password,
-        },
-      });
 
+      password = await bcrypt.hash(password, await bcrypt.genSalt());
+      await this.usersRepository.update(Number(data.id), { password });
+      const user = await this.userService.readOne(Number(data.id));
       return this.createToken(user);
     } catch (e) {
       throw new BadRequestException(e);
