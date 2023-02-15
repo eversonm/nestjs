@@ -24,9 +24,12 @@ $ npm install
 ```
 
 ## Before running the app
-Create a <b>.env</b> file with your MySQL config:
+Create a <b>.env</b> file with your MySQL config and Ethereal Email data:
 <pre>DATABASE_URL="mysql://root:MySql2023@localhost:3306/testedb"
 JWT_KEY="YOUR_SECRET_KEY_HERE_123456789101112"
+ETHEREAL_EMAIL_HOST="smtp.ethereal.email"
+ETHEREAL_EMAIL_USER="SOME_USER@ethereal.email"
+ETHEREAL_EMAIL_PASS="SOME_PASSWORD"
 </pre>
 And then:
 ```bash
