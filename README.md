@@ -56,6 +56,8 @@ $ npm run prod
 # unit tests
 $ npm run test
 
+# specific test example
+$ npm run test -t src/user/user.service.spec.ts
 # e2e tests
 $ npm run test:e2e
 

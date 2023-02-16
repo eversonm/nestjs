@@ -10,7 +10,6 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UserEntity } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
-
 @Module({
   imports: [
     ConfigModule.forRoot(),
