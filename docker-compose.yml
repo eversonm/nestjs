@@ -10,8 +10,6 @@ services:
       MYSQL_DATABASE: "testedb"
     ports:
       - "3306:3306"
-    volumes:
-      - ./db:/docker-entrypoint-initdb.d
 #     networks:
 #       - mysql-compose-network
 

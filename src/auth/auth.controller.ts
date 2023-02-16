@@ -17,16 +17,16 @@ import {
   FilesInterceptor,
 } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { User } from 'src/decorators/param-user.decorator';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { UserService } from 'src/user/user.service';
-import { AuthService } from './auth.service';
 import { AuthForgetDTO } from './dto/auth-forget.dto';
 import { AuthLoginDTO } from './dto/auth-login.dto';
 import { AuthRegisterDTO } from './dto/auth-register.dto';
 import { AuthResetDTO } from './dto/auth-reset.dto';
 import { join } from 'path';
-import { FileService } from 'src/file/file.service';
+import { User } from '../decorators/param-user.decorator';
+import { AuthGuard } from '../guards/auth.guard';
+import { UserService } from '../user/user.service';
+import { AuthService } from './auth.service';
+import { FileService } from '../file/file.service';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -94,13 +94,9 @@ export class AuthController {
   ) {
     const mymeT = photo.mimetype.split('/').pop();
     const fileName = photo.originalname.split('.')[0];
-    const path = join(
-      __dirname,
-      '../../storage/photos',
-      `photo-${user.id}-${fileName}.${mymeT}`,
-    );
+    const file = `photo-${user.id}-${fileName}.${mymeT}`;
     try {
-      await this.fileService.upload(photo, path);
+      await this.fileService.upload(photo, file);
     } catch (e) {
       throw new BadRequestException(e);
     }
