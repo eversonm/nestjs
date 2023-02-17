@@ -8,7 +8,7 @@ import {
   Post,
   Put,
   UseGuards,
-  UseInterceptors
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ParamId } from '../decorators/param-id.decorator';
@@ -86,6 +86,8 @@ export class UserController {
     description: 'Delete a user from database',
   })
   async delete(@ParamId() id: number) {
-    return this.userService.delete(id);
+    return {
+      success: await this.userService.delete(id),
+    };
   }
 }
