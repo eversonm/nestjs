@@ -108,14 +108,14 @@ export class AuthService {
     );
     await this.mailer.sendMail({
       subject: 'recuperação de senha',
-      to: 'eversonm@alu.ufc.br',
+      to: 'eversonm@email.com',
       template: 'forget',
       context: {
         name: user.name,
         token,
       },
     });
-    return true;
+    return { success: true };
   }
 
   async reset(password: string, token: string) {

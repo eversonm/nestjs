@@ -21,18 +21,16 @@ import { AuthForgetDTO } from './dto/auth-forget.dto';
 import { AuthLoginDTO } from './dto/auth-login.dto';
 import { AuthRegisterDTO } from './dto/auth-register.dto';
 import { AuthResetDTO } from './dto/auth-reset.dto';
-import { join } from 'path';
 import { User } from '../decorators/param-user.decorator';
 import { AuthGuard } from '../guards/auth.guard';
-import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { FileService } from '../file/file.service';
+import { UserEntity } from '../user/entities/user.entity';
 
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly userService: UserService,
     private readonly authService: AuthService,
     private readonly fileService: FileService,
   ) {}
@@ -59,10 +57,8 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Post('checkToken')
-  async check(@User() user) {
-    return {
-      user,
-    };
+  async check(@User() user: UserEntity) {
+    return user;
     // const jToken = (token ?? '').split(' ')[1];
     // return await this.authService.checkToken(jToken);
   }
@@ -84,7 +80,7 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Post('photo')
   async uploadPhoto(
-    @User() user,
+    @User() user: UserEntity,
     @UploadedFile(new ParseFilePipe({
       validators: [
         new FileTypeValidator({fileType: 'image/*'}),
@@ -100,7 +96,7 @@ export class AuthController {
     } catch (e) {
       throw new BadRequestException(e);
     }
-    return { success: true };
+    return photo;
   }
 
   @ApiBearerAuth()
